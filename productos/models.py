@@ -40,3 +40,30 @@ class Cliente(models.Model):
     def __str__(self):
         estado = "Activo" if self.activo else "Inactivo"
         return f"{self.nombre} - {self.email} ({estado})"
+
+
+class Venta(models.Model):
+    cliente = models.ForeignKey(Cliente, on_delete=models.PROTECT, related_name="ventas")
+    productos = models.ManyToManyField(Producto, through='DetalleVenta', related_name="ventas")
+    fecha_venta = models.DateTimeField(auto_now_add=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    activa = models.BooleanField(default=True)
+    
+    class Meta:
+        ordering = ['-fecha_venta'] 
+    
+    def __str__(self):
+        return f"Venta #{self.id} - {self.cliente.nombre} - Total: ${self.total}"
+
+
+class DetalleVenta(models.Model):
+    venta = models.ForeignKey(Venta, on_delete=models.CASCADE, related_name="detalles")
+    producto = models.ForeignKey(Producto, on_delete=models.PROTECT)
+    cantidad = models.IntegerField(default=1)
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    class Meta:
+        unique_together = ['venta', 'producto'] #q no repita el producto
+    
+    def __str__(self):
+        return f"{self.cantidad} x {self.producto.nombre}"
