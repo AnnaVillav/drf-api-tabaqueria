@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Categoria, Producto
-from .models import Categoria, Producto, Cliente 
+from .models import Categoria, Producto, Cliente, Venta, DetalleVenta
 
 
 @admin.register(Categoria)
@@ -20,3 +19,14 @@ class ClienteAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'email', 'telefono', 'activo', 'fecha_registro')
     list_filter = ('activo', 'fecha_registro')
     search_fields = ('nombre', 'email', 'telefono')
+
+
+class DetalleVentaInline(admin.TabularInline):
+    model = DetalleVenta
+    extra = 1 
+
+@admin.register(Venta)
+class VentaAdmin(admin.ModelAdmin):
+    list_display = ('id', 'cliente', 'fecha_venta', 'total', 'activa')
+    list_filter = ('activa', 'fecha_venta')
+    inlines = [DetalleVentaInline] 
