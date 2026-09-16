@@ -43,7 +43,6 @@ def producto_list(request):
 
 
 @api_view(["GET", "PUT", "DELETE"])
-@permission_classes([IsAuthenticatedOrReadOnly])
 def producto_detail(request, pk):
     producto = get_object_or_404(
         Producto.objects.select_related("categoria"),
@@ -76,7 +75,6 @@ def producto_detail(request, pk):
 
 # Parte opcional de la consigna
 @api_view(["GET", "POST"])
-@permission_classes([IsAuthenticatedOrReadOnly])
 def categoria_list(request):
     if request.method == "GET":
         categorias = Categoria.objects.all()
@@ -100,7 +98,7 @@ def categoria_list(request):
 
 class VentaListCreateAPIView(generics.ListCreateAPIView):
     queryset = Venta.objects.select_related("cliente").prefetch_related("productos")
-    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get_serializer_class(self):
         if self.request.method == "GET":
             return VentaPublicSerializer
@@ -108,7 +106,7 @@ class VentaListCreateAPIView(generics.ListCreateAPIView):
 
 class VentaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Venta.objects.select_related("cliente").prefetch_related("productos")
-    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get_serializer_class(self):
         if self.request.method == "GET":
             return VentaPublicSerializer
@@ -118,4 +116,3 @@ class VentaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 class ClienteListCreateAPIView(generics.ListCreateAPIView):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]

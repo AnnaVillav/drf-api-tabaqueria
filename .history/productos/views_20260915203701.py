@@ -116,6 +116,6 @@ class VentaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 #opcional de clientes
 class ClienteListCreateAPIView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]

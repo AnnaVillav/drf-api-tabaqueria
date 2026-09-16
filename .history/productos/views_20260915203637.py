@@ -108,7 +108,7 @@ class VentaListCreateAPIView(generics.ListCreateAPIView):
 
 class VentaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Venta.objects.select_related("cliente").prefetch_related("productos")
-    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get_serializer_class(self):
         if self.request.method == "GET":
             return VentaPublicSerializer
@@ -118,4 +118,3 @@ class VentaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 class ClienteListCreateAPIView(generics.ListCreateAPIView):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
