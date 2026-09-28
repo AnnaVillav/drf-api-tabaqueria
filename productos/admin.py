@@ -1,0 +1,32 @@
+from django.contrib import admin
+from .models import Categoria, Producto, Cliente, Venta, DetalleVenta
+
+
+@admin.register(Categoria)
+class CategoriaAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'activo')
+    list_filter = ('activo',) #act y inac
+
+@admin.register(Producto)
+class ProductoAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'marca', 'precio', 'stock', 'categoria', 'activo')
+    list_filter = ('categoria', 'activo', 'marca')
+    search_fields = ('nombre', 'codigo', 'marca') 
+
+
+@admin.register(Cliente)
+class ClienteAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'email', 'telefono', 'activo', 'fecha_registro')
+    list_filter = ('activo', 'fecha_registro')
+    search_fields = ('nombre', 'email', 'telefono')
+
+
+class DetalleVentaInline(admin.TabularInline):
+    model = DetalleVenta
+    extra = 1 
+
+@admin.register(Venta)
+class VentaAdmin(admin.ModelAdmin):
+    list_display = ('id', 'cliente', 'fecha_venta', 'total', 'activa')
+    list_filter = ('activa', 'fecha_venta')
+    inlines = [DetalleVentaInline] 
