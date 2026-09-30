@@ -4,12 +4,17 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import generics, viewsets
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from .models import Categoria, Producto
+from .models import Categoria, Producto, Cliente, Venta
 from .serializers import (
     CategoriaSerializer,
     ProductoPublicSerializer,
     ProductoSerializer,
+    ClienteSerializer,
+    VentaSerializer,
+    VentaPublicSerializer,
 )
 
 
@@ -89,3 +94,30 @@ def categoria_list(request):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+class ClienteViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Cliente.objects.all()
+    serializer_class = ClienteSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+class VentaViewSet(viewsets.ModelViewSet):
+    queryset = (
+        Venta.objects
+        .all()
+        .select_related("cliente")
+        .prefetch_related("detalles__producto")
+    )
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return VentaPublicSerializer
+
+        return VentaSerializer
+
+class ProductoViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Producto.objects.select_related("categoria").all()
+    serializer_class = ProductoPublicSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
