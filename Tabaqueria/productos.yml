@@ -1,0 +1,29 @@
+info:
+  name: productos
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://127.0.0.1:8000/api/productos/
+  body:
+    type: json
+    data: |-
+      {
+          "nombre": "Encendedor Classic",
+          "marca": "Bic",
+          "precio": 2200,
+          "stock": 50,
+          "codigo": "ENC-BIC-001",
+          "categoria": 3,
+          "activo": true
+        }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzkwODk4NDg4LCJpYXQiOjE3OTA3MjU2ODgsImp0aSI6Ijg2YjcwY2QzZTdmNDRmODVhMDc1N2U1Y2Y3NzU1NDNiIiwidXNlcl9pZCI6IjEifQ.Lq9rLFYR4JDKBTAWkUFYp0G0w6BneAyvnEWeRvSZojY
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
