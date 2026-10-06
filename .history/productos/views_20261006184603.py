@@ -178,6 +178,40 @@ class VentaViewSet(viewsets.ModelViewSet):
             "activa": venta.activa,
             "fecha_venta": venta.fecha_venta
         })
+
+
+    @action(detail=True, methods=["post"])
+    @transaction.atomic
+    def duplicar(self, request, pk=None):
+        venta_original = self.get_object()
+
+        nueva_venta = Venta.objects.create(
+            cliente=venta_original.cliente,
+            activa=True
+        )
+
+        for detalle in venta_original.detalles.all():
+            DetalleVenta.objects.create(
+                venta=nueva_venta,
+                producto=detalle.producto,
+                cantidad=detalle.cantidad,
+                precio_unitario=detalle.precio_unitario
+            )
+
+        total = sum(
+            detalle.cantidad * detalle.precio_unitario
+            for detalle in nueva_venta.detalles.all()
+        )
+
+        nueva_venta.total = total
+        nueva_venta.save(update_fields=["total"])
+
+        return Response({
+            "status": "Venta duplicada con éxito",
+            "venta_original": venta_original.id,
+            "nueva_venta": nueva_venta.id,
+            "total": nueva_venta.total
+        })
 class ProductoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Producto.objects.select_related("categoria").all()
     serializer_class = ProductoPublicSerializer

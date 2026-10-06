@@ -1,0 +1,31 @@
+info:
+  name: Ventas
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://127.0.0.1:8000/api/ventas/1/reactivar/
+  body:
+    type: json
+    data: |-
+      {
+        "cliente": 1,
+        "detalles": [
+          {
+            "producto_id": 1,
+            "cantidad": 2,
+            "precio_unitario": "4500.00"
+          }
+        ],
+        "activa": true
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzkxNDk0NDE5LCJpYXQiOjE3OTEzMjE2MTksImp0aSI6ImJjNmIwODVhYTY5YTQ4MWI5MzAyNTE2ZmUwMWZiZDNiIiwidXNlcl9pZCI6IjEifQ.gZckAjrI9Yt_XN-MfsvkTUtLND98FUczqa8vqDHqixk
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
