@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from django.db import transaction
+
 from .models import Categoria, Producto, Cliente, Venta
 from .serializers import (
     CategoriaSerializer,
@@ -117,67 +117,16 @@ class VentaViewSet(viewsets.ModelViewSet):
 
         return VentaSerializer
 
-
     @action(detail=True, methods=["post"])
     def cancelar(self, request, pk=None):
         venta = self.get_object()
-
         venta.activa = False
-        venta.save(update_fields=["activa"])
+        venta.save()
 
         return Response({
             "status": "Venta cancelada con éxito"
         })
 
-
-    @action(detail=True, methods=["post"])
-    def reactivar(self, request, pk=None):
-        venta = self.get_object()
-
-        venta.activa = True
-        venta.save(update_fields=["activa"])
-
-        return Response({
-            "status": "Venta reactivada con éxito"
-        })
-
-
-    @action(detail=True, methods=["post"])
-    def recalcular_total(self, request, pk=None):
-        venta = self.get_object()
-
-        total = sum(
-            detalle.cantidad * detalle.precio_unitario
-            for detalle in venta.detalles.all()
-        )
-
-        venta.total = total
-        venta.save(update_fields=["total"])
-
-        return Response({
-            "status": "Total recalculado con éxito",
-            "venta_id": venta.id,
-            "total": venta.total
-        })
-
-
-    @action(detail=True, methods=["get"])
-    def resumen(self, request, pk=None):
-        venta = self.get_object()
-
-        cantidad_productos = sum(
-            detalle.cantidad
-            for detalle in venta.detalles.all()
-        )
-
-        return Response({
-            "venta_id": venta.id,
-            "cliente": venta.cliente.nombre,
-            "cantidad_productos": cantidad_productos,
-            "total": venta.total,
-            "activa": venta.activa,
-            "fecha_venta": venta.fecha_venta
-        })
 class ProductoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Producto.objects.select_related("categoria").all()
     serializer_class = ProductoPublicSerializer
